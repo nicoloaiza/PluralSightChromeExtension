@@ -1,0 +1,22 @@
+{
+  "name": "PluralSight Video Downloader",
+  "version": "0",
+  "description": "PluralSight Video Downloader",
+  "background": {
+    "scripts": ["background.js"],
+    "persistent": false
+  },
+  "manifest_version": 2,
+  "browser_action": {
+    "name": "PluralSight Video Downloader",
+    "icons": ["icon.png"],
+    "default_icon": "icon.png"
+  },
+  "content_scripts": [ {
+    "js": [ "jquery-3.1.0.min.js"],
+    "matches": [ "http://*/*", "https://*/*"]
+  }],
+  "permissions": [
+   "activeTab"
+   ]
+}
