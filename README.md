@@ -1,5 +1,5 @@
 # PluralSightChromeExtension
-Chrome Extension for download videos from pluralsight to watch offline
+Chrome Extension to download videos from pluralsight to watch offline
 
 Just install the extension in chrome browser, open the course you want to download and download it from the extension icon, don't close the tab, the extension iterates through each video
 
