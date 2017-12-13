@@ -1,6 +1,5 @@
 
 jQuery.noConflict();
-
 var counter = 1;
 var courseTitle = jQuery(".title-course").first().find("a").first().text().trim().replace(/[^a-zA-Z0-9]/g, "_");
 var lastVideoName = jQuery(".module").last().find("li").last().find("h3").text().trim();
