@@ -38,7 +38,7 @@ current_path = Dir.pwd
 
 files = Dir.entries(current_path)
 json_files = files.select{ |x| x.include?('.json')}
-
+puts json_files
 
 if json_files.size > 0
 	json_file = json_files[0]
