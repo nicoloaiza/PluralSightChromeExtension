@@ -67,43 +67,44 @@ function dlVid() {
   var moduleTime = jQuery("header.active").find(".side-menu-module-duration").text();
   var videoTime = jQuery("ul.clips > li.selected").find(".side-menu-clip-duration").text();
 
-  if (previousModule != currMod) {
-    previousModule = currMod;
-    moduleCounter++;
-    videoCounter = 1;
-  }
+  if(currMod === lastModule){
+    lastVideoName = jQuery(".module").last().find("li").last().find("h3").text().trim();
+    if(currTitle === lastVideoName){
+      console.save(JSON.stringify(titlesArray), courseTitle + ".json");
+      lastVidToDl = true;
+    }
+  }  
 
-  titlesArray.push({
-    "Order": counter,
-    "Module": moduleCounter + ". " + currMod,
-    "Title": videoCounter + ". " + currTitle,
-    "FileName": getFileName(filePath),
-    "ModuleDuration" : moduleTime,
-    "videoDuration" : videoTime,
-    "Size": size
-  });
-  videoCounter++;
-  counter = counter + 1;
+  if(!lastVidToDl){
+    if (previousModule != currMod) {
+      previousModule = currMod;
+      moduleCounter++;
+      videoCounter = 1;
+    }
 
-  a.click();
+    titlesArray.push({
+      "Order": counter,
+      "Module": moduleCounter + ". " + currMod,
+      "Title": videoCounter + ". " + currTitle,
+      "FileName": getFileName(filePath),
+      "ModuleDuration" : moduleTime,
+      "videoDuration" : videoTime,
+      "Size": size
+    });
+    videoCounter++;
+    counter = counter + 1;
 
-  jQuery("#next-control").click();
+    a.click();
 
-  setTimeout(function () { jQuery("#play-control").click(); }, 5000);
+    jQuery("#next-control").click();
 
-  if (!lastVidToDl) {
+    setTimeout(function () { jQuery("#play-control").click(); }, 5000);
+
     setTimeout(dlVid, timeNeeded);
     nextVid = jQuery("ul.clips > li.selected").next();
     nextTitle = nextVid.find("h3").text().trim();
     nextDuration = nextVid.find(".side-menu-clip-duration").text().trim();
     nextModule = nextVid.parent().parent().find("h2").text().trim();
-    if (nextTitle == lastVideoName &&
-      nextModule == lastModule) {
-      lastVidToDl = true;
-    }
-  }
-  else {
-    console.save(JSON.stringify(titlesArray), courseTitle + ".json");
   }
 }
 
