@@ -7,25 +7,6 @@ def create_folder_if_not_exists(path)
 	end
 end
 
-def get_correct_file_name(path, file_name, counter)
-    return nil if counter > 200
-	if counter == 0
-		full_path = File.join(path, file_name + '.mp4')
-		unless File.file?(full_path)     
-			return get_correct_file_name(path, file_name, counter + 1)
-        else
-            return full_path
-		end
-	else
-		full_path = File.join(path, file_name + ' (' + counter.to_s + ').mp4')
-		unless File.file?(full_path)
-			return fullpath = get_correct_file_name(path, file_name, counter + 1)
-        else
-            return full_path
-		end
-	end
-end
-
 def sanitize(filename)
   bad_chars = [ '/', '\\', '?', '%', '*', ':', '|', '"', '<', '>', '.', ' ' ]
   bad_chars.each do |bad_char|
@@ -51,8 +32,8 @@ if json_files.size > 0
 		create_folder_if_not_exists(new_current_path)
 	}
 	json_content.each { |x|
-		src_path = get_correct_file_name(current_path, File.basename(x['FileName'], '.mp4'), 0)
-		dst_path = File.join(current_path, x['Module'], sanitize(x['Title']) + '.mp4')
+		src_path = File.join(current_path, x['FileName'])
+		dst_path = File.join(current_path, x['Module'], x['FileName'])
 		FileUtils.mv(src_path, dst_path) if src_path
 	}	
 end

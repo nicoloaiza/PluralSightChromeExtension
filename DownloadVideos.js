@@ -41,6 +41,17 @@ var titlesArray = [];
   }
 })(console);
 
+function SaveFile(blob, fileName) {
+  var a = document.createElement("a");
+  document.body.appendChild(a);
+  a.style = "display: none";
+  url = window.URL.createObjectURL(blob);
+  a.href = url;
+  a.download = fileName;
+  a.click();
+  window.URL.revokeObjectURL(url);
+}
+
 function getFileName(fileSrc) {
   var filename = fileSrc.substring(fileSrc.lastIndexOf('/') + 1);
   if (filename.indexOf('?') > -1)
@@ -52,21 +63,28 @@ function getNameForFile(value){
   return value.replace(/[^a-z0-9]/gi, '_').toLowerCase();
 }
 
+function downloadFile(url, fileName){
+  var x=new XMLHttpRequest();
+	x.open("GET", url, true);
+	x.responseType = 'blob';
+	x.onload=function(e){
+    SaveFile(e.target.response, fileName);
+  }
+	x.send();  
+}
+
 function dlVid() {
-  var a = document.createElement('a');
   var filePath = jQuery("video").attr("src");
-  a.href = filePath;
   var currTitle = jQuery("ul.clips > li.selected").find("h3").text().trim();
   var currMod = jQuery("ul.clips > li.selected").parent().parent().find("h2").text().trim();
-  var time = jQuery("span.total-time").text();
-  a.download = 'currTitle';
-  a.target = '_self';
+  console.log(currMod);
+  // var time = jQuery("span.total-time").text();
   var minutes = parseInt(jQuery("span.total-time").text().trim().split(":")[0]) + 1;
   var size = minutes * minuteSizeInMB * 1024 * 1024;
   var timeNeeded = Math.ceil((size / (dlSpeed * 1024)) * 500);
   var moduleTime = jQuery("header.active").find(".side-menu-module-duration").text();
   var videoTime = jQuery("ul.clips > li.selected").find(".side-menu-clip-duration").text();
-
+  
   if(currMod === lastModule){
     lastVideoName = jQuery(".module").last().find("li").last().find("h3").text().trim();
     if(currTitle === lastVideoName){
@@ -82,19 +100,19 @@ function dlVid() {
       videoCounter = 1;
     }
 
-    titlesArray.push({
+    var currentVideo = {
       "Order": counter,
       "Module": moduleCounter + ". " + currMod,
       "Title": videoCounter + ". " + currTitle,
-      "FileName": getFileName(filePath),
+      "FileName": getNameForFile(moduleCounter + '_' + currMod + '_' + videoCounter + '_' + currTitle) + '.mp4',
       "ModuleDuration" : moduleTime,
       "videoDuration" : videoTime,
       "Size": size
-    });
+    };
+    downloadFile(filePath, currentVideo.FileName);
+    titlesArray.push(currentVideo);
     videoCounter++;
     counter = counter + 1;
-
-    a.click();
 
     jQuery("#next-control").click();
 

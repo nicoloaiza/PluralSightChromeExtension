@@ -3,7 +3,7 @@
   "version": "0",
   "description": "PluralSight Video Downloader",
   "background": {
-    "scripts": ["background.js"],
+    "scripts": [ "background.js" ],
     "persistent": false
   },
   "manifest_version": 2,
@@ -14,7 +14,7 @@
     "default_popup": "popup.html"
   },
   "content_scripts": [ {
-    "js": [ "jquery-3.1.0.min.js"],
+    "js": [ "jquery-3.1.0.min.js" ],
     "matches": [ "http://*/*", "https://*/*"]
   }],
   "permissions": [
