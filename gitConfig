@@ -1,0 +1,90 @@
+[includeIf "gitdir:**/Impartner/**"]
+  path = ~/.gitconfig_impartner
+[includeIf "gitdir:**/Safefleet/**"]
+  path = ~/.gitconfig_safefleet
+[includeIf "gitdir:**/OurGlass/**"]
+  path = ~/.gitconfig_ourglass
+[includeIf "gitdir:**/Personal/**"]
+  path = ~/.gitconfig_personal
+
+[alias]
+    # Delete all local branches but master and the current one, only if they are fully merged with master.
+    br-delete = "!f(){\
+        git branch | grep -v "master" | grep -v ^* | grep -v "develop" | xargs git branch -d;\
+    }; f"
+    # Delete all local branches but master and the current one.
+    br-delete-force = "!f(){\
+        git branch | grep -v "master" | grep -v ^* | grep -v "develop" | xargs git branch -D;\
+    }; f"
+	reset-hard = reset --hard HEAD~30
+    pullRemote= "!f() { git checkout --track origin/\"$1\"; }; f"
+    cor= "!f() { git checkout -b $1 origin/\"$1\"; }; f"
+    list = ! git branch
+    listRemote = ! git branch -r
+	alias = ! git config --get-regexp ^alias\\. | sed -e s/^alias\\.// -e s/\\ /\\ =\\ /
+    s = ! git status
+    st = status -sb
+    f = ! git fetch
+    c = ! git commit
+    co = ! git checkout
+    p = ! git pull
+    a = ! git add .
+    plog = log --graph --pretty='format:%C(red)%d%C(reset) %C(yellow)%h%C(reset) %ar %C(green)%aN%C(reset) %s'
+    tlog = log --stat --since='1 Day Ago' --graph --pretty=oneline --abbrev-commit --date=relative
+    lg = log --color --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit
+    rank = shortlog -sn --no-merges
+    bdm = "!git branch --merged | grep -v '*' | xargs -n 1 git branch -d"
+    db =  ! git branch | grep -Ev 'master|develop' | xargs git branch -D
+    ap = add --patch
+    be = branch --edit-description
+    ci = commit --interactive
+    #Naming:
+    branch-name = rev-parse --abbrev-ref HEAD
+    top-name = rev-parse --show-toplevel
+    upstream-name = !git for-each-ref --format='%(upstream:short)' $(git symbolic-ref -q HEAD)
+    #Publishing:
+    publish = "!git push -u origin $(git branch-name)"
+    unpublish = "!git push origin :$(git branch-name)"
+    #Combining
+    ours   = !"f() { git checkout --ours $@ && git add $@; }; f"
+    theirs = !"f() { git checkout --theirs $@ && git add $@; }; f"
+    #Summarizing
+    dd = diff --check --dirstat --find-copies --find-renames --histogram --color
+    ll = log --graph --topo-order --abbrev-commit --date=short --decorate --all --boundary --pretty=format:'%Cgreen%ad %Cred%h%Creset -%C(yellow)%d%Creset %s %Cblue[%cn]%Creset %Cblue%G?%Creset'
+    logs =  log --show-signature
+    #Committing
+    cam = commit --amend --message
+    rbi = rebase --interactive @{upstream}
+    #Logging
+    log-graph = log --graph --all  --decorate --oneline
+    log-my-week = !git log --author $(git config user.email) --since "1 week ago"
+    #Backtracking
+    uncommit = reset --soft HEAD~1
+    cleanout = !git clean -df && git checkout -- .
+    #Searching
+    grep-group =  grep --break --heading --line-number
+    grep-all = !"git rev-list --all | xargs git grep '$1'"
+    #Preserving
+    snapshot = !git stash push "snapshot: $(date)" && git stash apply "stash@{0}"
+    archive = !"f() { top=$(rev-parse --show-toplevel); cd $top; tar cvf $top.tar $top ; }; f"
+    #Comparing
+    incoming = !git remote update --prune; git log ..@{upstream}
+    outgoing = log @{upstream}..    
+    #Synchronizing:
+    get = !git fetch --prune && git pull --rebase=preserve && git submodule update --init --recursive
+    put = !git commit --all && git push
+    #Branching:
+    topic-start = "!f(){ b=$1; git checkout master; git fetch; git rebase; git checkout -b "$b" master; };f"
+    topic-stop = "!f(){ b=$1; git checkout master; git branch -d "$b"; git push origin ":$b"; };f"
+    #Pluralizing
+    branches = branch -a
+    stashes = stash list
+    tags = tag -n1 --list
+    #Streamlining
+    pruner = !git prune --expire=now; git reflog expire --expire-unreachable=now --rewrite --all
+    repacker = !git repack -a -d -f --depth=300 --window=300 --window-memory=1g
+    expunge = !"f() { git filter-branch --force --index-filter \"git rm --cached --ignore-unmatch $1\" --prune-empty --tag-name-filter cat -- --all }; f"
+[commit]
+	cleanup = whitespace
+[gpg]
+	program = gpg
